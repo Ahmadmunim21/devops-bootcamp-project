@@ -1,6 +1,6 @@
 # DevOps Bootcamp Final Project
 
-End-to-end DevOps infrastructure project implemented using:
+Devops Bootcamp Project using:
 
 - AWS
 - Terraform
@@ -32,14 +32,23 @@ The project will provision an AWS environment containing:
 
 ### Phase 0
 - [x] Repository initialized
-- [ ] AWS CLI configured
-- [ ] Terraform configured
+- [x] AWS CLI configured
+- [x] Terraform configured
 
 ### Phase 1
-- [ ] Terraform S3 backend
+- [x] Terraform S3 remote backend
+- [x] S3 versioning
+- [x] S3 encryption
+- [x] S3 public access blocking
 
 ### Phase 2
-- [ ] VPC and networking
+- [x] VPC 10.0.0.0/24
+- [x] Public subnet 10.0.0.0/25
+- [x] Private subnet 10.0.0.128/25
+- [x] Internet Gateway
+- [x] NAT Gateway
+- [x] Public route table
+- [x] Private route table
 
 ### Phase 3
 - [ ] Security Groups

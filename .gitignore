@@ -46,3 +46,7 @@ id_ed25519
 # OS files
 .DS_Store
 Thumbs.db
+
+# Terraform plan files
+*.tfplan
+tfplan
