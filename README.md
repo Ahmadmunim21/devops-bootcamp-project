@@ -56,8 +56,17 @@ The project will provision an AWS environment containing:
 ### Phase 4
 - [ ] EC2 instances
 
-### Phase 5
-- [ ] Ansible configuration
+### Phase 5 - Configuration Management
+
+- [x] Ansible installed on private controller
+- [x] Controller private IP: 10.0.0.135
+- [x] Web server inventory target: 10.0.0.5
+- [x] Monitoring inventory target: 10.0.0.136
+- [x] Controller-to-target SSH configured
+- [x] Ansible ping successful
+- [x] Docker installed using Ansible
+- [x] Docker service enabled
+- [x] Ansible playbook verified as idempotent
 
 ### Phase 6
 - [ ] Docker and ECR
