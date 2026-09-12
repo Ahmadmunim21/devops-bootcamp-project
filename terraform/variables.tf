@@ -15,3 +15,21 @@ variable "private_subnet_cidr" {
   type        = string
   default     = "10.0.0.128/25"
 }
+
+variable "web_instance_type" {
+  description = "EC2 instance type for the web server"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "controller_instance_type" {
+  description = "EC2 instance type for the Ansible controller"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "monitoring_instance_type" {
+  description = "EC2 instance type for the monitoring server"
+  type        = string
+  default     = "t3.micro"
+}

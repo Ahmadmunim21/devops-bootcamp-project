@@ -62,3 +62,63 @@ output "private_route_table_id" {
   description = "Private route table ID"
   value       = aws_route_table.private.id
 }
+
+output "public_security_group_id" {
+  description = "Security group ID for public web server"
+  value       = aws_security_group.public.id
+}
+
+output "private_security_group_id" {
+  description = "Security group ID for private servers"
+  value       = aws_security_group.private.id
+}
+
+output "ubuntu_ami_id" {
+  description = "Ubuntu AMI used by EC2 servers"
+  value       = data.aws_ami.ubuntu.id
+}
+
+output "web_instance_id" {
+  description = "EC2 instance ID of the web server"
+  value       = aws_instance.web.id
+}
+
+output "web_private_ip" {
+  description = "Private IP of the web server"
+  value       = aws_instance.web.private_ip
+}
+
+output "web_public_ip" {
+  description = "Elastic IP of the web server"
+  value       = aws_eip.web.public_ip
+}
+
+output "controller_instance_id" {
+  description = "EC2 instance ID of the Ansible controller"
+  value       = aws_instance.controller.id
+}
+
+output "controller_private_ip" {
+  description = "Private IP of the Ansible controller"
+  value       = aws_instance.controller.private_ip
+}
+
+output "monitoring_instance_id" {
+  description = "EC2 instance ID of the monitoring server"
+  value       = aws_instance.monitoring.id
+}
+
+output "monitoring_private_ip" {
+  description = "Private IP of the monitoring server"
+  value       = aws_instance.monitoring.private_ip
+}
+
+output "instance_ids" {
+  description = "EC2 instance IDs used by the project"
+
+  value = {
+    web        = aws_instance.web.id
+    controller = aws_instance.controller.id
+    monitoring = aws_instance.monitoring.id
+  }
+}
