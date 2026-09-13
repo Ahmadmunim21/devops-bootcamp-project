@@ -176,7 +176,7 @@
       until: grafana_ready.status == 200
       changed_when: false
 
-    - name: Query Prometheus for web server status
+    - name: Wait for Prometheus to scrape web server
       ansible.builtin.uri:
         url: 'http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22web-server%22%7D'
         method: GET
@@ -184,6 +184,12 @@
         status_code: 200
       register: prometheus_web_status
       changed_when: false
+      retries: 15
+      delay: 5
+      until:
+        - prometheus_web_status.json.status == "success"
+        - prometheus_web_status.json.data.result | length > 0
+        - prometheus_web_status.json.data.result[0].value[1] == "1"
 
     - name: Verify Prometheus sees web server as UP
       ansible.builtin.assert:
