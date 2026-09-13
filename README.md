@@ -1,5 +1,7 @@
 # DevOps Bootcamp Final Project
 
+## Project Overview
+
 Devops Bootcamp Project using:
 
 - AWS
@@ -14,19 +16,54 @@ Devops Bootcamp Project using:
 
 ## Architecture
 
-The project will provision an AWS environment containing:
+The project is deployed in AWS Region `ap-southeast-1` using Terraform, Ansible, Docker, Amazon ECR, Prometheus, Grafana, Cloudflare, and GitHub Actions.
 
-- VPC
-- Public subnet
-- Private subnet
-- Internet Gateway
-- NAT Gateway
-- Security Groups
-- Web Server
-- Ansible Controller
-- Monitoring Server
-- Amazon ECR
-- Terraform remote state in Amazon S3
+                           Internet
+                              |
+                    +---------+---------+
+                    |                   |
+          web.ahmadmunim.asia   monitoring.ahmadmunim.asia
+                    |                   |
+              Cloudflare DNS       Cloudflare Tunnel
+                    |                   |
+               Elastic IP               |
+                    |                   |
+                    v                   v
+          +------------------+   +----------------------+
+          | Web EC2          |   | Monitoring EC2       |
+          | 10.0.0.5         |   | 10.0.0.136           |
+          | Public Subnet    |   | Private Subnet       |
+          |                  |   |                      |
+          | Docker App       |   | Prometheus           |
+          | Node Exporter    |   | Grafana              |
+          +------------------+   +----------------------+
+                    ^                    ^
+                    |                    |
+                    +---------+----------+
+                              |
+                     +-------------------+
+                     | Ansible Controller|
+                     | 10.0.0.135        |
+                     | Private Subnet    |
+                     +-------------------+
+                              ^
+                              |
+                    AWS Systems Manager
+                              |
+                       Administrator
+
+
+## Repository Structure
+
+```
+devops-bootcamp-project/
+├── .github/
+│   └── workflows/
+├── ansible/
+├── app/
+├── monitoring/
+├── terraform/
+└── README.md
 
 ## Project Status
 
@@ -138,3 +175,38 @@ The project will provision an AWS environment containing:
 - [x] Terraform configuration automatically validated
 - [ ] GitHub Pages documentation
 - [ ] Custom documentation domain
+
+## Security Design
+
+- AWS Systems Manager is used for server administration.
+- Controller and monitoring EC2 instances have no public IP addresses.
+- Grafana is accessed through Cloudflare Tunnel.
+- Grafana port 3000 is not publicly exposed.
+- Prometheus port 9090 is not publicly exposed.
+- GitHub Actions authenticates to AWS using OIDC.
+- No long-lived AWS credentials are stored in GitHub.
+- IAM permissions are separated by server and workload requirements.
+
+## Live Project URLs
+
+- Web Application: https://web.ahmadmunim.asia
+- Monitoring: https://monitoring.ahmadmunim.asia
+- Repository: https://github.com/Ahmadmunim21/devops-bootcamp-project
+- Documentation: https://docs.ahmadmunim.asia
+
+## Grafana Access
+
+- URL: https://monitoring.ahmadmunim.asia
+- Username: `devops-bootcamp-munim`
+- Role: Viewer
+- Password: Provided separately
+
+## Final
+
+| Assessment Area | Status | Evidence |
+|---|---|---|
+| Infrastructure as Code | ✅ Complete | Terraform backend, networking, security groups and EC2 |
+| Configuration Management | ✅ Complete | Ansible controller, Docker deployment, ECR and idempotent playbooks |
+| Monitoring & Observability | ✅ Complete | Node Exporter, Prometheus target UP and Grafana |
+| Domain & Secure Access | ✅ Complete | Cloudflare DNS, Cloudflare Tunnel and private monitoring server |
+| Documentation | ⏳ Finalising | README, architecture, screenshots and GitHub Pages |
