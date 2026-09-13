@@ -119,3 +119,15 @@ The project will provision an AWS environment containing:
 - [x] Grafana port 3000 is not publicly exposed
 - [x] Prometheus port 9090 is not publicly exposed
 - [x] cloudflared installed using Ansible
+
+### Phase 9 - CI/CD & Documentation
+
+- [x] GitHub Actions CI/CD workflow created
+- [x] GitHub OIDC authentication with AWS configured
+- [x] Temporary AWS credentials used without long-lived AWS keys
+- [x] Application Docker image built and tested in CI
+- [x] Application image pushed to Amazon ECR
+- [x] Application deployed through Ansible Controller
+- [x] Production website verified after deployment
+- [ ] GitHub Pages documentation
+- [ ] Custom documentation domain
