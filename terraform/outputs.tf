@@ -137,3 +137,8 @@ output "ecr_registry" {
   description = "AWS ECR registry endpoint"
   value       = split("/", aws_ecr_repository.app.repository_url)[0]
 }
+
+output "github_actions_role_arn" {
+  description = "IAM role assumed by GitHub Actions using OIDC"
+  value       = aws_iam_role.github_actions.arn
+}

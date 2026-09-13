@@ -33,3 +33,8 @@ variable "monitoring_instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+variable "github_repository" {
+  description = "GitHub repository allowed to assume the CI/CD IAM role"
+  type        = string
+}
