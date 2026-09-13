@@ -1,0 +1,51 @@
+---
+- name: Deploy DevOps Bootcamp application
+  hosts: web
+  become: true
+  gather_facts: true
+
+  vars:
+    aws_region: "ap-southeast-1"
+    container_name: "ship-app"
+    application_port: 80
+
+  tasks:
+    - name: Ensure AWS CLI and Docker Python library are installed
+      ansible.builtin.apt:
+        name:
+          - awscli
+          - python3-docker
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Login Docker to private Amazon ECR
+      ansible.builtin.shell: >
+        aws ecr get-login-password
+        --region {{ aws_region }}
+        | docker login
+        --username AWS
+        --password-stdin
+        {{ ecr_repository_url.split('/')[0] }}
+      changed_when: false
+      no_log: true
+
+    - name: Pull application image from ECR
+      community.docker.docker_image:
+        name: "{{ ecr_repository_url }}"
+        tag: "{{ image_tag }}"
+        source: pull
+
+    - name: Run application container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ ecr_repository_url }}:{{ image_tag }}"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "{{ application_port }}:80"
+
+    - name: Verify application responds locally
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ application_port }}"
+        status_code: 200
