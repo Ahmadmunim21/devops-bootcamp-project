@@ -55,126 +55,62 @@ The project is deployed in AWS Region `ap-southeast-1` using Terraform, Ansible,
 
 ## Repository Structure
 
-```
+The repository is organised by application, infrastructure, configuration management, monitoring, and CI/CD responsibilities.
+
+<pre>
 devops-bootcamp-project/
+│
 ├── .github/
 │   └── workflows/
+│       ├── app-cicd.yml          # Application CI/CD pipeline
+│       └── pages.yml             # GitHub Pages deployment
+│
 ├── ansible/
+│   ├── ansible.cfg               # Ansible configuration
+│   ├── inventory.ini             # Managed server inventory
+│   ├── deploy-app.yml            # Web application deployment
+│   ├── deploy-monitoring.yml     # Prometheus & Grafana deployment
+│   ├── playbook.yml              # Base configuration playbook
+│   └── requirements.yml          # Ansible dependencies
+│
 ├── app/
+│   └── Dockerfile                # Multi-stage application image
+│
 ├── monitoring/
+│   ├── docker-compose.yml        # Monitoring containers
+│   ├── prometheus.yml            # Prometheus scrape configuration
+│   └── grafana/
+│       ├── dashboards/
+│       └── provisioning/
+│
 ├── terraform/
-└── README.md
+│   ├── backend.tf                # Remote Terraform state
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── ecr.tf                    # Amazon ECR
+│   ├── github-actions.tf         # GitHub OIDC & CI/CD IAM
+│   └── ...                       # VPC, EC2, IAM and security resources
+│
+└── README.md                     # Project documentation
+</pre>
 
 ## Project Status
 
-### Phase 0
-- [x] Repository initialized
-- [x] AWS CLI configured
-- [x] Terraform configured
+## Project Status
 
-### Phase 1
-- [x] Terraform S3 remote backend
-- [x] S3 versioning
-- [x] S3 encryption
-- [x] S3 public access blocking
-
-### Phase 2
-- [x] VPC 10.0.0.0/24
-- [x] Public subnet 10.0.0.0/25
-- [x] Private subnet 10.0.0.128/25
-- [x] Internet Gateway
-- [x] NAT Gateway
-- [x] Public route table
-- [x] Private route table
-
-### Phase 3 - Security Groups
-
-- [x] Public security group created
-- [x] Private security group created
-- [x] Security groups managed using Terraform
-- [x] HTTP access configured for the web application
-- [x] Private EC2 instances protected from direct public access
-- [x] Server administration uses AWS Systems Manager instead of public SSH
-
-### Phase 4 - EC2, IAM & Systems Manager
-
-- [x] Web EC2 instance deployed
-- [x] Controller EC2 instance deployed
-- [x] Monitoring EC2 instance deployed
-- [x] EC2 instances provisioned using Terraform
-- [x] Controller and monitoring servers deployed in private subnet
-- [x] IAM instance profiles attached to EC2 instances
-- [x] AWS Systems Manager configured for remote administration
-- [x] SSM connectivity verified
-- [x] Private servers administered without public SSH access
-
-### Phase 5 - Configuration Management
-
-- [x] Ansible installed on private controller
-- [x] Controller private IP: 10.0.0.135
-- [x] Web server inventory target: 10.0.0.5
-- [x] Monitoring inventory target: 10.0.0.136
-- [x] Controller-to-target SSH configured
-- [x] Ansible ping successful
-- [x] Docker installed using Ansible
-- [x] Docker service enabled
-- [x] Ansible playbook verified as idempotent
-
-### Phase 6 - Docker & ECR
-
-- [x] Docker installed on target server using Ansible
-- [x] Application Docker image built successfully
-- [x] Multi-stage Dockerfile used
-- [x] Private Amazon ECR repository configured
-- [x] Docker image pushed to Amazon ECR
-- [x] Application deployed from ECR to Web EC2 using Ansible
-- [x] Application container exposed on port 80
-- [x] Application accessible through the web server
-- [x] Ansible deployment verified as idempotent
-
-### Phase 7 - Monitoring & Observability
-
-- [x] Node Exporter deployed on web server
-- [x] Prometheus deployed on monitoring server
-- [x] Grafana deployed on monitoring server
-- [x] Prometheus configured to scrape web-server metrics
-- [x] Prometheus target verified as UP
-- [x] Grafana dashboard available
-- [x] Monitoring stack deployed using Ansible
-- [x] Ansible deployment verified as idempotent
-- [x] Monitoring server remains private
-
-### Phase 8 - Domain & Secure Access
-
-- [x] Cloudflare-managed domain
-- [x] Web application: https://web.ahmadmunim.asia
-- [x] Cloudflare proxied DNS
-- [x] Cloudflare Tunnel deployed
-- [x] Monitoring URL: https://monitoring.ahmadmunim.asia
-- [x] Grafana available through Cloudflare Tunnel
-- [x] Monitoring EC2 has no public IP
-- [x] Grafana port 3000 is not publicly exposed
-- [x] Prometheus port 9090 is not publicly exposed
-- [x] cloudflared installed using Ansible
-
-### Phase 9 - CI/CD Automation
-
-- [x] GitHub Actions configured
-- [x] AWS authentication uses GitHub OIDC
-- [x] No long-lived AWS access keys stored in GitHub
-- [x] Docker image automatically built
-- [x] Container health tested during CI
-- [x] Docker image automatically pushed to private Amazon ECR
-- [x] Images tagged using Git commit SHA
-- [x] `latest` application image maintained
-- [x] GitHub Actions triggers deployment through AWS Systems Manager
-- [x] Deployment executed from the Ansible Controller
-- [x] Web Server deployment performed using Ansible
-- [x] Production URL automatically health checked
-- [x] Terraform formatting automatically checked
-- [x] Terraform configuration automatically validated
-- [ ] GitHub Pages documentation
-- [ ] Custom documentation domain
+| Phase | Scope | Status | Key Outcome |
+|---|---|---|---|
+| Phase 0 | Local Environment & Repository | ✅ Complete | AWS CLI, Terraform, Git and GitHub repository configured |
+| Phase 1 | Terraform Remote Backend | ✅ Complete | S3 remote state with versioning, encryption and public-access blocking |
+| Phase 2 | AWS Network Infrastructure | ✅ Complete | VPC, public/private subnets, routing, Internet Gateway and NAT |
+| Phase 3 | Security Groups | ✅ Complete | Public/private security groups managed through Terraform |
+| Phase 4 | EC2, IAM & Systems Manager | ✅ Complete | Web, controller and monitoring EC2 instances with SSM access |
+| Phase 5 | Configuration Management | ✅ Complete | Ansible controller configured and idempotency verified |
+| Phase 6 | Docker & Amazon ECR | ✅ Complete | Application container built, stored in ECR and deployed to web server |
+| Phase 7 | Monitoring & Observability | ✅ Complete | Node Exporter, Prometheus and Grafana operational |
+| Phase 8 | Domain & Secure Access | ✅ Complete | Cloudflare DNS, HTTPS and private Grafana access through Cloudflare Tunnel |
+| Phase 9 | CI/CD Automation | ✅ Complete | GitHub Actions builds, tests, pushes SHA-tagged image and deploys via Ansible |
+| Phase 10 | Final Certification Audit | ✅ Completes | Documentation, GitHub Pages and final submission verification |
 
 ## Security Design
 
