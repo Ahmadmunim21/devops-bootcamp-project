@@ -122,3 +122,18 @@ output "instance_ids" {
     monitoring = aws_instance.monitoring.id
   }
 }
+
+output "ecr_repository_name" {
+  description = "Private ECR repository name"
+  value       = aws_ecr_repository.app.name
+}
+
+output "ecr_repository_url" {
+  description = "Private ECR repository URL"
+  value       = aws_ecr_repository.app.repository_url
+}
+
+output "ecr_registry" {
+  description = "AWS ECR registry endpoint"
+  value       = split("/", aws_ecr_repository.app.repository_url)[0]
+}

@@ -1,0 +1,195 @@
+---
+# ============================================================
+# PLAY 1
+# Deploy node_exporter to Web Server
+# ============================================================
+
+- name: Deploy node exporter to web server
+  hosts: web
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Ensure Docker Python library is installed
+      ansible.builtin.apt:
+        name:
+          - python3-docker
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Deploy node exporter container
+      community.docker.docker_container:
+        name: node-exporter
+        image: quay.io/prometheus/node-exporter:v1.8.2
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host
+        pid_mode: host
+        volumes:
+          - "/:/host:ro,rslave"
+        command: "--path.rootfs=/host"
+
+    - name: Verify node exporter is responding
+      ansible.builtin.uri:
+        url: http://127.0.0.1:9100/metrics
+        method: GET
+        status_code: 200
+      register: node_exporter_health
+      changed_when: false
+
+
+# ============================================================
+# PLAY 2
+# Deploy Prometheus + Grafana to Monitoring Server
+# ============================================================
+
+- name: Deploy monitoring stack
+  hosts: monitoring
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Install monitoring dependencies
+      ansible.builtin.apt:
+        name:
+          - docker-compose-v2
+          - curl
+          - jq
+          - openssl
+          - python3-docker
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create monitoring directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - /opt/monitoring
+        - /opt/monitoring/grafana
+        - /opt/monitoring/grafana/provisioning
+        - /opt/monitoring/grafana/provisioning/datasources
+        - /opt/monitoring/grafana/provisioning/dashboards
+        - /opt/monitoring/grafana/dashboards
+
+    - name: Copy Docker Compose configuration
+      ansible.builtin.copy:
+        src: ../monitoring/docker-compose.yml
+        dest: /opt/monitoring/docker-compose.yml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Copy Prometheus configuration
+      ansible.builtin.copy:
+        src: ../monitoring/prometheus.yml
+        dest: /opt/monitoring/prometheus.yml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Copy Grafana datasource configuration
+      ansible.builtin.copy:
+        src: ../monitoring/grafana/provisioning/datasources/prometheus.yml
+        dest: /opt/monitoring/grafana/provisioning/datasources/prometheus.yml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Copy Grafana dashboard provider
+      ansible.builtin.copy:
+        src: ../monitoring/grafana/provisioning/dashboards/dashboard.yml
+        dest: /opt/monitoring/grafana/provisioning/dashboards/dashboard.yml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Copy Grafana dashboard
+      ansible.builtin.copy:
+        src: ../monitoring/grafana/dashboards/web-server.json
+        dest: /opt/monitoring/grafana/dashboards/web-server.json
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Generate Grafana credentials once
+      ansible.builtin.shell: |
+        umask 077
+        PASSWORD="$(openssl rand -base64 24 | tr -d '\n')"
+        printf 'GRAFANA_ADMIN_USER=admin\nGRAFANA_ADMIN_PASSWORD=%s\n' "$PASSWORD" > /opt/monitoring/.env
+      args:
+        creates: /opt/monitoring/.env
+      no_log: true
+
+    - name: Protect Grafana credentials
+      ansible.builtin.file:
+        path: /opt/monitoring/.env
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Start Prometheus and Grafana
+      community.docker.docker_compose_v2:
+        project_src: /opt/monitoring
+        state: present
+        pull: missing
+
+    - name: Verify node exporter from monitoring server
+      ansible.builtin.uri:
+        url: http://10.0.0.5:9100/metrics
+        method: GET
+        status_code: 200
+      changed_when: false
+
+    - name: Wait for Prometheus
+      ansible.builtin.uri:
+        url: http://127.0.0.1:9090/-/ready
+        method: GET
+        status_code: 200
+      register: prometheus_ready
+      retries: 15
+      delay: 3
+      until: prometheus_ready.status == 200
+      changed_when: false
+
+    - name: Wait for Grafana
+      ansible.builtin.uri:
+        url: http://127.0.0.1:3000/api/health
+        method: GET
+        status_code: 200
+      register: grafana_ready
+      retries: 15
+      delay: 3
+      until: grafana_ready.status == 200
+      changed_when: false
+
+    - name: Query Prometheus for web server status
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22web-server%22%7D'
+        method: GET
+        return_content: true
+        status_code: 200
+      register: prometheus_web_status
+      changed_when: false
+
+    - name: Verify Prometheus sees web server as UP
+      ansible.builtin.assert:
+        that:
+          - prometheus_web_status.json.status == "success"
+          - prometheus_web_status.json.data.result | length > 0
+          - prometheus_web_status.json.data.result[0].value[1] == "1"
+        success_msg: "Prometheus successfully scrapes node_exporter on the web server."
+        fail_msg: "Prometheus cannot scrape the web server node_exporter."
