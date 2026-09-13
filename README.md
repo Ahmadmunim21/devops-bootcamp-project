@@ -120,14 +120,21 @@ The project will provision an AWS environment containing:
 - [x] Prometheus port 9090 is not publicly exposed
 - [x] cloudflared installed using Ansible
 
-### Phase 9 - CI/CD & Documentation
+### Phase 9 - CI/CD Automation
 
-- [x] GitHub Actions CI/CD workflow created
-- [x] GitHub OIDC authentication with AWS configured
-- [x] Temporary AWS credentials used without long-lived AWS keys
-- [x] Application Docker image built and tested in CI
-- [x] Application image pushed to Amazon ECR
-- [x] Application deployed through Ansible Controller
-- [x] Production website verified after deployment
+- [x] GitHub Actions configured
+- [x] AWS authentication uses GitHub OIDC
+- [x] No long-lived AWS access keys stored in GitHub
+- [x] Docker image automatically built
+- [x] Container health tested during CI
+- [x] Docker image automatically pushed to private Amazon ECR
+- [x] Images tagged using Git commit SHA
+- [x] `latest` application image maintained
+- [x] GitHub Actions triggers deployment through AWS Systems Manager
+- [x] Deployment executed from the Ansible Controller
+- [x] Web Server deployment performed using Ansible
+- [x] Production URL automatically health checked
+- [x] Terraform formatting automatically checked
+- [x] Terraform configuration automatically validated
 - [ ] GitHub Pages documentation
 - [ ] Custom documentation domain
