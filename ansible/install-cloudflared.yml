@@ -1,0 +1,41 @@
+---
+- name: Install Cloudflare Tunnel agent
+  hosts: monitoring
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Create APT keyring directory
+      ansible.builtin.file:
+        path: /usr/share/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Install Cloudflare repository signing key
+      ansible.builtin.get_url:
+        url: https://pkg.cloudflare.com/cloudflare-main.gpg
+        dest: /usr/share/keyrings/cloudflare-main.gpg
+        mode: "0644"
+
+    - name: Configure Cloudflare APT repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/cloudflared.list
+        mode: "0644"
+        content: |
+          deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main
+
+    - name: Install cloudflared
+      ansible.builtin.apt:
+        name: cloudflared
+        state: present
+        update_cache: true
+
+    - name: Check cloudflared version
+      ansible.builtin.command:
+        cmd: cloudflared --version
+      register: cloudflared_version
+      changed_when: false
+
+    - name: Display cloudflared version
+      ansible.builtin.debug:
+        var: cloudflared_version.stdout
