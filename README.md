@@ -110,7 +110,7 @@ devops-bootcamp-project/
 | Phase 7 | Monitoring & Observability | ✅ Complete | Node Exporter, Prometheus and Grafana operational |
 | Phase 8 | Domain & Secure Access | ✅ Complete | Cloudflare DNS, HTTPS and private Grafana access through Cloudflare Tunnel |
 | Phase 9 | CI/CD Automation | ✅ Complete | GitHub Actions builds, tests, pushes SHA-tagged image and deploys via Ansible |
-| Phase 10 | Final Certification Audit | ✅ Completes | Documentation, GitHub Pages and final submission verification |
+| Phase 10 | Final | ✅ Complete | Documentation, GitHub Pages and final submission verification |
 
 ## Security Design
 
