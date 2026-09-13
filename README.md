@@ -50,11 +50,26 @@ The project will provision an AWS environment containing:
 - [x] Public route table
 - [x] Private route table
 
-### Phase 3
-- [ ] Security Groups
+### Phase 3 - Security Groups
 
-### Phase 4
-- [ ] EC2 instances
+- [x] Public security group created
+- [x] Private security group created
+- [x] Security groups managed using Terraform
+- [x] HTTP access configured for the web application
+- [x] Private EC2 instances protected from direct public access
+- [x] Server administration uses AWS Systems Manager instead of public SSH
+
+### Phase 4 - EC2, IAM & Systems Manager
+
+- [x] Web EC2 instance deployed
+- [x] Controller EC2 instance deployed
+- [x] Monitoring EC2 instance deployed
+- [x] EC2 instances provisioned using Terraform
+- [x] Controller and monitoring servers deployed in private subnet
+- [x] IAM instance profiles attached to EC2 instances
+- [x] AWS Systems Manager configured for remote administration
+- [x] SSM connectivity verified
+- [x] Private servers administered without public SSH access
 
 ### Phase 5 - Configuration Management
 
@@ -68,14 +83,39 @@ The project will provision an AWS environment containing:
 - [x] Docker service enabled
 - [x] Ansible playbook verified as idempotent
 
-### Phase 6
-- [ ] Docker and ECR
+### Phase 6 - Docker & ECR
 
-### Phase 7
-- [ ] Prometheus and Grafana
+- [x] Docker installed on target server using Ansible
+- [x] Application Docker image built successfully
+- [x] Multi-stage Dockerfile used
+- [x] Private Amazon ECR repository configured
+- [x] Docker image pushed to Amazon ECR
+- [x] Application deployed from ECR to Web EC2 using Ansible
+- [x] Application container exposed on port 80
+- [x] Application accessible through the web server
+- [x] Ansible deployment verified as idempotent
 
-### Phase 8
-- [ ] Cloudflare and secure access
+### Phase 7 - Monitoring & Observability
 
-### Phase 9
-- [ ] CI/CD and documentation
+- [x] Node Exporter deployed on web server
+- [x] Prometheus deployed on monitoring server
+- [x] Grafana deployed on monitoring server
+- [x] Prometheus configured to scrape web-server metrics
+- [x] Prometheus target verified as UP
+- [x] Grafana dashboard available
+- [x] Monitoring stack deployed using Ansible
+- [x] Ansible deployment verified as idempotent
+- [x] Monitoring server remains private
+
+### Phase 8 - Domain & Secure Access
+
+- [x] Cloudflare-managed domain
+- [x] Web application: https://web.ahmadmunim.asia
+- [x] Cloudflare proxied DNS
+- [x] Cloudflare Tunnel deployed
+- [x] Monitoring URL: https://monitoring.ahmadmunim.asia
+- [x] Grafana available through Cloudflare Tunnel
+- [x] Monitoring EC2 has no public IP
+- [x] Grafana port 3000 is not publicly exposed
+- [x] Prometheus port 9090 is not publicly exposed
+- [x] cloudflared installed using Ansible
