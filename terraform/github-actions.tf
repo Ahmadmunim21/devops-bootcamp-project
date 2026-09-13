@@ -44,7 +44,7 @@ resource "aws_iam_role" "github_actions" {
           }
 
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:Ahmadmunim21@192777945/devops-bootcamp-project@1366256185:ref:refs/heads/main"
           }
         }
       }
